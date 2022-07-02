@@ -1,6 +1,5 @@
 #include "MCAPP.h"
 wxIMPLEMENT_APP(MCAPP);
-
 MCAPP::MCAPP()
 {
 
