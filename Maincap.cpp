@@ -9,21 +9,21 @@ Maincap::Maincap() : wxFrame(nullptr, wxID_ANY, "MineSweeperLab - wxWidget", wxP
 	/*button1 = new wxButton(this, 10001, "Ok", wxPoint(10, 10), wxSize(150, 50));
 	m_txt1 = new wxTextCtrl(this, wxID_ANY, "", wxPoint(10, 70), wxSize(300, 30));
 	m_list1 = new wxListBox(this, wxID_ANY, wxPoint(10, 110), wxSize(300, 300));*/
-	btn = new wxButton * [nFieldWidth * nFieldHeight];
-	wxGridSizer* grid = new wxGridSizer(nFieldWidth, nFieldHeight, 0, 0);
-	nField = new int[nFieldWidth * nFieldHeight];
-	for (int x = 0; x < nFieldWidth; x++)
+	button = new wxButton * [MFieldWidth * MFieldHeight];
+	wxGridSizer* grid = new wxGridSizer(MFieldWidth, MFieldHeight, 0, 0);
+	MineField = new int[MFieldWidth * MFieldHeight];
+	for (int x = 0; x < MFieldWidth; x++)
 	{
-		for (int y = 0; y < nFieldHeight; y++)
+		for (int y = 0; y < MFieldHeight; y++)
 		{
-			btn[y * nFieldWidth + x] = new wxButton(this, 10000 + (y * nFieldWidth + x));
+			button[y * MFieldWidth + x] = new wxButton(this, 10000 + (y * MFieldWidth + x));
 
 
-			grid->Add(btn[y * nFieldWidth + x], 1, wxEXPAND || wxALL);
+			grid->Add(button[y * MFieldWidth + x], 1, wxEXPAND | wxALL);
 
-			btn[y * nFieldWidth + x]->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &Maincap::OnButtonClicked, this);
+			button[y * MFieldWidth + x]->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &Maincap::OnButtonClicked, this);
 
-			nField[y * nFieldWidth + x] = 0;
+			MineField[y * MFieldWidth + x] = 0;
 
 		}
 	}
@@ -32,43 +32,44 @@ Maincap::Maincap() : wxFrame(nullptr, wxID_ANY, "MineSweeperLab - wxWidget", wxP
 }
 Maincap::~Maincap()
 {
-	delete[] btn;
+	delete[] button;
 }
 
+//field mine
 void Maincap::OnButtonClicked(wxCommandEvent& evt)
 {
-	int x = (evt.GetId() - 10000) % nFieldWidth;
-	int y = (evt.GetId() - 10000) / nFieldWidth;
+	int x = (evt.GetId() - 10000) % MFieldWidth;
+	int y = (evt.GetId() - 10000) / MFieldWidth;
 	if (BFstart)
 	{
 		int Fmines = 40;
 		while (Fmines)
 		{
-			int rx = rand() % nFieldWidth;
-			int ry = rand() % nFieldHeight;
+			int rx = rand() % MFieldWidth;
+			int ry = rand() % MFieldHeight;
 
-			if (nField[ry * nFieldWidth + rx] == 0 && rx != x && ry != y)
+			if (MineField[ry * MFieldWidth + rx] == 0 && rx != x && ry != y)
 			{
 
-				nField[ry * nFieldWidth + rx] = -1;
+				MineField[ry * MFieldWidth + rx] = -1;
 				Fmines--;
 			}
 		}
 		BFstart = false;
 	}
 
-	btn[y * nFieldWidth + x]->Enable(false);
+	button[y * MFieldWidth + x]->Enable(false);
 
-	if (nField[y * nFieldWidth + x] == -1)
+	if (MineField[y * MFieldWidth + x] == -1)
 	{
-		wxMessageBox("WOW!!! You Lost Imma need you to sign of - GAME OVER");
+		wxMessageBox("WOW!!! You lost imma need you to sign off - GAME OVER");
 		BFstart = true;
-		for (int x = 0; x < nFieldWidth; x++)
-			for (int y = 0; y < nFieldHeight; y++)
+		for (int x = 0; x < MFieldWidth; x++)
+			for (int y = 0; y < MFieldHeight; y++)
 			{
-				nField[y * nFieldWidth + x] = 0;
-				btn[y * nFieldWidth + x]->SetLabel("");
-				btn[y * nFieldWidth + x]->Enable(true);
+				MineField[y * MFieldWidth + x] = 0;
+				button[y * MFieldWidth + x]->SetLabel("");
+				button[y * MFieldWidth + x]->Enable(true);
 			}
 	}
 	else
@@ -79,9 +80,9 @@ void Maincap::OnButtonClicked(wxCommandEvent& evt)
 			for (int c = -1; c < 2; c++)
 			{
 
-				if (x + i >= 0 && x + i < nFieldWidth && y + c >= 0 && y + c < nFieldHeight)
+				if (x + i >= 0 && x + i < MFieldWidth && y + c >= 0 && y + c < MFieldHeight)
 				{
-					if (nField[(y + c) * nFieldWidth + (x + i)] == -1)
+ 					if (MineField[(y + c) * MFieldWidth + (x + i)] == -1)
 					{
 						mCounter++;
 					}
@@ -91,7 +92,7 @@ void Maincap::OnButtonClicked(wxCommandEvent& evt)
 
 		if (mCounter > 0)
 		{
-			btn[y * nFieldWidth + x]->SetLabel(std::to_string(mCounter));
+			button[y * MFieldWidth + x]->SetLabel(std::to_string(mCounter));
 		}
 	}
 	evt.Skip();
